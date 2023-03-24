@@ -9,7 +9,7 @@
 #include <iostream>
 using namespace std;
 
-//目前唯一想到的方法是采用递归的方法
+//目前唯一想到的方法是采用递归的方法2
 
 int main() {
 	return 0;
