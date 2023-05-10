@@ -1,27 +1,49 @@
-#include "bits/stdc++.h"
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <iomanip>
+
 using namespace std;
 
+string add(string num1, string num2) {
+    double x, y;
+    stringstream ss1(num1), ss2(num2);
+    ss1 >> x;
+    ss2 >> y;
+    double sum = x + y;
+    stringstream ss;
+    ss << fixed << setprecision(2) << sum;
+    return ss.str();
+}
+
+string sub(string num1, string num2) {
+    double x, y;
+    stringstream ss1(num1), ss2(num2);
+    ss1 >> x;
+    ss2 >> y;
+    double diff = x - y;
+    stringstream ss;
+    ss << fixed << setprecision(2) << diff;
+    return ss.str();
+}
+
 int main() {
-    int n;
-    cin >> n;
+    string num1, num2, op;
+    cout << "Enter two numbers: ";
+    cin >> num1 >> num2;
+    cout << "Enter an operator (+ or -): ";
+    cin >> op;
 
-    vector<string> s(n);
-    vector<int> a(n);
-
-    for (int i = 0; i < n; i++) {
-        cin >> s[i] >> a[i];
+    string result;
+    if (op == "+") {
+        result = add(num1, num2);
+    } else if (op == "-") {
+        result = sub(num1, num2);
+    } else {
+        cerr << "Invalid operator: " << op << endl;
+        return 1;
     }
 
-    int max_value = -1;
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (i == j) continue;
-            if (s[j].find(s[i]) != string::npos) {
-                max_value = max(max_value, a[i] + a[j]);
-            }
-        }
-    }
-    cout << max_value << endl;
+    cout << "Result: " << result << endl;
     return 0;
 }
