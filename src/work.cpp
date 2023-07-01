@@ -1,3 +1,4 @@
+
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -24,7 +25,7 @@ int getMinModification(const string& s) {
         }
     }
 
-    return modificationCount + st.size(); // 添加剩余左括号的修改次数
+    return modificationCount + st.size()/2; // 添加剩余左括号的修改次数
 }
 
 int main() {
