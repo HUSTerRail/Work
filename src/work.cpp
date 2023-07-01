@@ -2,6 +2,7 @@
 using namespace std;
 
 int getMinModification(const string& s) {
+    if(s.length() <1){return 0;}
     int modificationCount = 0;
     int fankuohao = 0;
     stack<char> st;
