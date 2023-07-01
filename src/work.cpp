@@ -1,32 +1,35 @@
-#include <iostream>
-#include <stack>
-#include <string>
-
+#include<bits/stdc++.h>
 using namespace std;
 
 int getMinModification(const string& s) {
     int modificationCount = 0;
+    int fankuohao = 0;
     stack<char> st;
 
-    for (char c : s) {
+    // for (char c : s) {
+    for(int i = 0; i<s.length(); i++){
+        char c = s[i];
+    
         if (c == '(' || c == '<' || c == '[' || c == '{') {
-            st.push(c); // 将左括号入栈
+            st.push(c); 
         } else {
-            if (!st.empty()) { // 如果栈不为空
-                char top = st.top(); // 获取栈顶元素
+            if (!st.empty()) { 
+                char top = st.top(); 
                 st.pop(); // 弹出栈顶元素
                 if ((top == '(' && c != ')') || (top == '<' && c != '>') ||
                     (top == '[' && c != ']') || (top == '{' && c != '}')) {
-                    modificationCount++; // 如果当前字符与栈顶元素不匹配，则需要进行修改
+                    // cout<<"didi"<<endl;
+                    modificationCount++; 
                 }
             } else {
-                // 如果没有对应的左括号，需要添加一个左括号
-                modificationCount++;
+               
+                fankuohao++;
+            
             }
         }
     }
 
-    return modificationCount + st.size()/2; // 添加剩余的左括号数量
+    return modificationCount + st.size()/2 +fankuohao/2 +fankuohao%2 +  st.size()%2; // 添加剩余的左括号数量
 }
 
 int main() {
