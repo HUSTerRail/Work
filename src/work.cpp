@@ -23,7 +23,7 @@ int main() {
         }
     }
 
-    int half = total / 2;
+    int half = total / 2 + 2;
 
     int minDiff = total;
 
@@ -40,7 +40,7 @@ int main() {
         s1 += colSum[j];
         int s2 = total - s1;
         minDiff = min(minDiff, abs(s1 - s2));
-        if (s1 > half) break; 
+        if (s1 > half ) break; 
     }
 
     cout << minDiff << endl;
