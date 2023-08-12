@@ -1,4 +1,7 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <cmath>
+
 using namespace std;
 
 int main() {
@@ -6,42 +9,41 @@ int main() {
     cin >> n >> m;
 
     vector<vector<int>> cake(n, vector<int>(m));
-    int totalSum = 0;
+    vector<int> rowSum(n, 0);
+    vector<int> colSum(m, 0);
 
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
+    int total = 0;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             cin >> cake[i][j];
-            totalSum += cake[i][j];
+            total += cake[i][j];
+            rowSum[i] += cake[i][j];
+            colSum[j] += cake[i][j];
         }
     }
 
-    int halfTotalSum = totalSum / 2;
+    int half = total / 2;
 
-    // DP array to store whether the sum can be reached using the cake pieces
-    vector<vector<bool>> dp(halfTotalSum + 1, vector<bool>(2, false));
+    int minDiff = total;
 
-    dp[0][0] = dp[0][1] = true;
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            for (int k = halfTotalSum; k >= cake[i][j]; --k) {
-                dp[k][0] = dp[k][0] || dp[k - cake[i][j]][0];
-                dp[k][1] = dp[k][1] || dp[k - cake[i][j]][1];
-            }
-        }
+    int s1 = 0;
+    for (int i = 0; i < n; i++) {
+        s1 += rowSum[i];
+        int s2 = total - s1;
+        minDiff = min(minDiff, abs(s1 - s2));
+        if (s1 > half) break; 
     }
 
-    int minDifference = totalSum;
-
-    for (int i = 0; i <= halfTotalSum; ++i) {
-        if (dp[i][0] || dp[i][1]) {
-            int s1 = i;
-            int s2 = totalSum - i;
-            minDifference = min(minDifference, abs(s1 - s2));
-        }
+    s1 = 0;
+    for (int j = 0; j < m; j++) {
+        s1 += colSum[j];
+        int s2 = total - s1;
+        minDiff = min(minDiff, abs(s1 - s2));
+        if (s1 > half) break; 
     }
 
-    cout << minDifference << endl;
-
+    cout << minDiff << endl;
     return 0;
 }
+
