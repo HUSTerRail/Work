@@ -1,55 +1,47 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
-struct Window {
-    int rows;
-    int cols;
-};
-
-
-void slidingWindow(const std::vector<std::vector<int>>& matrix, const Window& window) {
-    int M = matrix.size();
-    int N = matrix[0].size();
-    int m = window.rows;
-    int n = window.cols;
-
-    std::vector<int> histogram(256, 0); 
-
-    for (int i = 0; i <= M - m; ++i) {
-        for (int j = 0; j <= N - n; ++j) {
-            int maxVal = 0;
-            
-            for (int x = 0; x < m; ++x) {
-                for (int y = 0; y < n; ++y) {
-                    maxVal = std::max(maxVal, matrix[i + x][j + y]);
-                }
-            }
-
-            histogram[maxVal]++;
-        }
-    }
-
-    for (int i = 0; i < 256; ++i) {
-        if (histogram[i] > 0) {
-            std::cout << i << " " << histogram[i] << std::endl;
-        }
-    }
-}
+#include <bits/stdc++.h>
+using namespace std;
 
 int main() {
-    int M, N, m, n;
-    std::cin >> M >> N >> m >> n;
+    int n, m;
+    cin >> n >> m;
 
-    std::vector<std::vector<int>> matrix(M, std::vector<int>(N));
-    for (int i = 0; i < M; ++i) {
-        for (int j = 0; j < N; ++j) {
-            std::cin >> matrix[i][j];
+    vector<vector<int>> cake(n, vector<int>(m));
+    int totalSum = 0;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            cin >> cake[i][j];
+            totalSum += cake[i][j];
         }
     }
 
-    Window window = { m, n };
-    slidingWindow(matrix, window);
+    int halfTotalSum = totalSum / 2;
+
+    // DP array to store whether the sum can be reached using the cake pieces
+    vector<vector<bool>> dp(halfTotalSum + 1, vector<bool>(2, false));
+
+    dp[0][0] = dp[0][1] = true;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            for (int k = halfTotalSum; k >= cake[i][j]; --k) {
+                dp[k][0] = dp[k][0] || dp[k - cake[i][j]][0];
+                dp[k][1] = dp[k][1] || dp[k - cake[i][j]][1];
+            }
+        }
+    }
+
+    int minDifference = totalSum;
+
+    for (int i = 0; i <= halfTotalSum; ++i) {
+        if (dp[i][0] || dp[i][1]) {
+            int s1 = i;
+            int s2 = totalSum - i;
+            minDifference = min(minDifference, abs(s1 - s2));
+        }
+    }
+
+    cout << minDifference << endl;
 
     return 0;
 }
