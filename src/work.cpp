@@ -1,44 +1,44 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-int findMaxLengthSubarray(const vector<int>& nums, int k) {
-    int n = nums.size();
-    vector<int> prefixSum(n + 1, 0);
-    unordered_map<int, int> sumIndexMap;
-    sumIndexMap[0] = 0;
-    int maxLength = -1;
-    int currentSum = 0;
 
-    for (int i = 0; i < n; ++i) {
-        prefixSum[i + 1] = prefixSum[i] + nums[i];
-        currentSum += nums[i];
-
-        if (sumIndexMap.find(currentSum - k) != sumIndexMap.end()) {
-            maxLength = max(maxLength, i + 1 - sumIndexMap[currentSum - k]);
-        }
-
-        if (sumIndexMap.find(currentSum) == sumIndexMap.end()) {
-            sumIndexMap[currentSum] = i + 1;
-        }
-    }
-
-    return maxLength;
-}
 
 int main() {
-    int n, k;
+    int n,k, input;
     cin >> n >> k;
-
-    vector<int> nums(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> nums[i];
+    int tmp = 0;
+    int sum = 0;
+    int length = 0;
+    int max_length = 0;
+    vector<int>nums;
+    for(int i=0; i<n; i++){
+            cin >> input;
+            sum += input;
+            nums.push_back(sum);
     }
 
-    int maxLength = findMaxLengthSubarray(nums, k);
-    cout << maxLength << endl;
-
+    for(int i=0; i<n; i++){
+        if(nums[i]%k == 0 && nums[i]/k == i+1){
+            length = i+1;
+        }else if(nums[i] > (i+1)*k){
+            for(int j=0; j<i; j++){
+                tmp = nums[i]-nums[j];
+                if(tmp % k == 0 && tmp/k == (i-j)){
+                    length = i-j;
+                }
+            }
+        }
+        if(length>max_length){
+            max_length = length;
+        }
+    }
+    if(max_length == 0){
+        cout<<"-1"<<endl;
+    }else{
+         cout << max_length<<endl;
+    }
+   
     return 0;
+
+
 }
