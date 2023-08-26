@@ -1,52 +1,44 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
 using namespace std;
 
+int findMaxLengthSubarray(const vector<int>& nums, int k) {
+    int n = nums.size();
+    vector<int> prefixSum(n + 1, 0);
+    unordered_map<int, int> sumIndexMap;
+    sumIndexMap[0] = 0;
+    int maxLength = -1;
+    int currentSum = 0;
 
+    for (int i = 0; i < n; ++i) {
+        prefixSum[i + 1] = prefixSum[i] + nums[i];
+        currentSum += nums[i];
+
+        if (sumIndexMap.find(currentSum - k) != sumIndexMap.end()) {
+            maxLength = max(maxLength, i + 1 - sumIndexMap[currentSum - k]);
+        }
+
+        if (sumIndexMap.find(currentSum) == sumIndexMap.end()) {
+            sumIndexMap[currentSum] = i + 1;
+        }
+    }
+
+    return maxLength;
+}
 
 int main() {
-    int n, m, tmp, q;
-    cin >> q;
-    
-    int flag = 0;
-    vector<int>a;
-    vector<int>b;
-    for(int w = 0; w<q; w++){
-        cin >> n >> m;
-        for(int i=0; i<n; i++){
-            cin >> tmp;
-            a.push_back(tmp);
-        }
+    int n, k;
+    cin >> n >> k;
 
-        for(int i=0; i<n; i++){
-            cin >> tmp;
-            b.push_back(tmp);
-        }
-
-        sort(a.begin(), a.end());
-        sort(b.begin(), b.end());
-
-        for(int i=0; i<n; i++){
-            if(a[i] + b[n-1-i] < 0 || a[i] + b[n-1-i]>m){
-                cout<<i<<" "<<a[i]<<":"<< b[n-1-i]<<endl;
-                flag = 1;
-                break;
-            }
-        }
-
-        if(flag == 1){
-            cout<<"No"<<endl;
-            flag = 0;
-        }else{
-            cout << "Yes";
-        }
-        a = vector<int>();
-        b = vector<int>();
+    vector<int> nums(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
     }
-    
 
-
-
-   
+    int maxLength = findMaxLengthSubarray(nums, k);
+    cout << maxLength << endl;
 
     return 0;
 }
