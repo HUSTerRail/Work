@@ -20,9 +20,13 @@ int main() {
             length = i+1;
         }else if(nums[i] > (i+1)*k){
             for(int j=0; j<i; j++){
+                if(max_length >= (i-j)){
+                    break;
+                }
                 tmp = nums[i]-nums[j];
                 if(tmp % k == 0 && tmp/k == (i-j)){
                     length = i-j;
+                    break;
                 }
             }
         }
