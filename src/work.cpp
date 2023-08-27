@@ -1,45 +1,43 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
 using namespace std;
 
+void generate_s(vector<int>&nums, int k, int i, int sum, int &max_sum){
+    if(i>= nums.size()){
+        return;
+    }
+    sum += nums[i];
+    if(sum%k == 0 && sum > max_sum){
+        max_sum = sum;
+    }
+    generate_s(nums, k, i+1, sum, max_sum);
+
+    sum -=nums[i];
+    generate_s(nums, k, i+1, sum, max_sum);
+}
 int main() {
-    int n,k, input;
+    int n, k, input;
     cin >> n >> k;
-    int tmp = 0;
-    int sum = 0;
-    int length = 0;
-    int max_length = 0;
     vector<int>nums;
-    for(int i=0; i<n; i++){
-            cin >> input;
-            sum += input;
-            nums.push_back(sum);
+
+
+    for (int i = 0; i < n; ++i) {
+        cin >>input;
+        nums.push_back(input);
     }
 
-    for(int i=0; i<n; i++){
-        if(nums[i]%k == 0 && nums[i]/k == i+1){
-            length = i+1;
-        }else if(nums[i] > (i+1)*k){
-            for(int j=0; j<i; j++){
-                if(max_length >= (i-j)){
-                    break;
-                }
-                tmp = nums[i]-nums[j];
-                if(tmp % k == 0 && tmp/k == (i-j)){
-                    length = i-j;
-                    break;
-                }
-            }
-        }
-        if(length>max_length){
-            max_length = length;
-        }
-    }
-    if(max_length == 0){
-        cout<<"-1"<<endl;
+    int max_sum = 0;
+    generate_s(nums, k, 0, 0, max_sum);
+
+    
+    if(max_sum == 0){
+        cout << "-1"<<endl;
     }else{
-         cout << max_length<<endl;
+        cout << max_sum << endl;
     }
-   
-    return 0;
+    
 
+    return 0;
 }
