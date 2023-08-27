@@ -1,29 +1,44 @@
-#include<iostream>
-#include<vector>
-#include<map>
-#include<algorithm>
 #include<stdio.h>
-using namespace std;
+ 
 int main()
 {
-    int n,k;
-    cin>>n>>k;
-    vector<int> arr(n);
-    vector<vector<long long>> dp(n+1,vector<long long>(k,-10000000000));  // dp[i][j]  表示前i个数字中   sum%k=j   的最大和   
-
-    dp[0][0]=0;
-    for(int i=1;i<=n;i++)
+    int n;
+    scanf("%d",&n);
+    
+    //printf("  *  \n * * \n* * *"); // 模拟输入为1的状态 其他状态由此构成   //不太行 换行不知道怎么处理
+    for(int i=1;i<=3*n;i++) //圣诞树
     {
-        cin>>arr[i];
-       //每引入一个数 查询每个余数情况
-        for(int j=0;j<k;j++)
+        int a=i%3;
+        int b=i/3;   
+        for(int j=3*n-i;j>=1;j--)// 树两边的空格
+            printf(" ");
+        if(a==1)
         {
-              dp[i][j]=max(dp[i-1][j],dp[i-1][(k+j-arr[i]%k)%k]+arr[i]);
+            for(int j=1;j<=b;j++)
+                printf("*     ");
+            printf("*");     
         }
+        else if(a==2)
+        {
+            for(int j=1;j<=b;j++)
+                printf("* *   ");
+            printf("* *");  
+        }
+        else
+        {
+            for(int j=1;j<=b-1;j++)
+                printf("* * * ");
+            printf("* * *");  
+        }
+        for(int j=3*n-i;j>=1;j--) // 树两边的空格 中间以“* ”打印 所以少一个空格
+            printf(" ");
+        printf("\n");
     }
-    //最终结果是  所有数字中 余数为0的 最大和
-    if(dp[n][0]<=0)
-        cout<<-1<<endl;
-    else
-        cout<<dp[n][0]<<endl;
+    for(int j=n;j>=1;j--) //尾部
+    {    
+        for(int i=3*n-1;i>=1;i--)
+            printf(" ");
+        printf("*\n");    
+    }
+    return 0;
 }
