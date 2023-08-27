@@ -1,43 +1,29 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include<iostream>
+#include<vector>
+#include<map>
+#include<algorithm>
+#include<stdio.h>
 using namespace std;
+int main()
+{
+    int n,k;
+    cin>>n>>k;
+    vector<int> arr(n);
+    vector<vector<long long>> dp(n+1,vector<long long>(k,-10000000000));  // dp[i][j]  表示前i个数字中   sum%k=j   的最大和   
 
-void generate_s(vector<int>&nums, int k, int i, int sum, int &max_sum){
-    if(i>= nums.size()){
-        return;
+    dp[0][0]=0;
+    for(int i=1;i<=n;i++)
+    {
+        cin>>arr[i];
+       //每引入一个数 查询每个余数情况
+        for(int j=0;j<k;j++)
+        {
+              dp[i][j]=max(dp[i-1][j],dp[i-1][(k+j-arr[i]%k)%k]+arr[i]);
+        }
     }
-    sum += nums[i];
-    if(sum%k == 0 && sum > max_sum){
-        max_sum = sum;
-    }
-    generate_s(nums, k, i+1, sum, max_sum);
-
-    sum -=nums[i];
-    generate_s(nums, k, i+1, sum, max_sum);
-}
-int main() {
-    int n, k, input;
-    cin >> n >> k;
-    vector<int>nums;
-
-
-    for (int i = 0; i < n; ++i) {
-        cin >>input;
-        nums.push_back(input);
-    }
-
-    int max_sum = 0;
-    generate_s(nums, k, 0, 0, max_sum);
-
-    
-    if(max_sum == 0){
-        cout << "-1"<<endl;
-    }else{
-        cout << max_sum << endl;
-    }
-    
-
-    return 0;
+    //最终结果是  所有数字中 余数为0的 最大和
+    if(dp[n][0]<=0)
+        cout<<-1<<endl;
+    else
+        cout<<dp[n][0]<<endl;
 }
