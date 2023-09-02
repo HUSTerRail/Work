@@ -1,32 +1,46 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <set>
+
 using namespace std;
+
+struct Coupon {
+    int b, c;
+};
+
+bool cmp(const Coupon& a, const Coupon& b) {
+    return a.b > b.b;
+}
+
 int main() {
     int n, m;
     cin >> n >> m;
-    vector<int> goods(n);
-    multiset<pair<int, int>> coupons; 
+    
+    vector<int> prices(n);
     for (int i = 0; i < n; ++i) {
-        cin >> goods[i];
+        cin >> prices[i];
     }
+    
+    vector<Coupon> coupons(m);
     for (int i = 0; i < m; ++i) {
-        int bi, ci;
-        cin >> bi >> ci;
-        coupons.insert({bi, ci});
+        cin >> coupons[i].b >> coupons[i].c;
     }
-    sort(goods.begin(), goods.end(), greater<int>());
-    long long totalCost = 0; 
-    for (int price : goods) {
-        auto it = coupons.lower_bound({price, 0});
-        if (it != coupons.end()) {
-            totalCost += price - it->second;
-            coupons.erase(it);
+    
+    sort(coupons.begin(), coupons.end(), cmp);
+    
+    long long totalCost = 0;
+    int couponIndex = 0;
+    
+    for (int i = 0; i < n; ++i) {
+        if (couponIndex < m && prices[i] >= coupons[couponIndex].b) {
+            totalCost += max(prices[i] - coupons[couponIndex].c, 0);
+            ++couponIndex;
         } else {
-            totalCost += price;
+            totalCost += prices[i];
         }
     }
+    
     cout << totalCost << endl;
+    
     return 0;
 }
