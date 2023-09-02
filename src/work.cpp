@@ -14,7 +14,8 @@ int main() {
     for(int i = 0; i < n; i++){
         MAX = max(arr[i], MAX);
     }
-    for (int target = arr[0]; target < MAX; target *= 2) {  // 第一个元素有可能降低到的最低值
+    int add_count = 0;
+    for (int target = arr[0]; target < MAX; target *= 2, add_count++) {  // 第一个元素有可能降低到的最低值
         int ops = 0;
         int max_val = target;
         for (int i = 0; i < n; ++i) {
@@ -31,9 +32,9 @@ int main() {
             ops += cnt;
             max_val = max(max_val, val);  // 更新可能的最大值
         }
-        min_ops = min(min_ops, ops);
+        min_ops = min(min_ops, ops + add_count);
     }
+    min_ops = min(min_ops, add_count);
     cout << min_ops << endl;
     return 0;
 }
-
