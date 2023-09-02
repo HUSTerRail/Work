@@ -1,49 +1,44 @@
 #include <iostream>
 #include <vector>
-#include <climits>
-#include <cmath>
 #include <algorithm>
 
 using namespace std;
+
+static bool cmp(const pair<int, int> a1, const pair<int, int> a2){
+    return a1.second > a2.second;
+}
 
 int main() {
     int n, m;
     cin >> n >> m;
 
-    vector<vector<int>> a(n + 1, vector<int>(m + 1, 0));
-    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    vector<int> goods(n);
+    vector<pair<int, int>> coupons(m);
 
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            cin >> a[i][j];
-        }
+    for (int i = 0; i < n; ++i) {
+        cin >> goods[i];
     }
 
-    int total = 0;
-
-    // Compute the sum of all rectangle areas ending at (i, j)
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            dp[i][j] = a[i][j] + dp[i - 1][j] + dp[i][j - 1] - dp[i - 1][j - 1];
-            total += a[i][j];
-        }
+    for (int i = 0; i < m; ++i) {
+        cin >> coupons[i].first >> coupons[i].second;
     }
 
-    int min_diff = INT_MAX;
+    sort(goods.begin(), goods.end(), greater<int>());
+    sort(coupons.begin(), coupons.end(), cmp);
 
-    // Iterate over all possible squares to find the optimal cut
-    for (int len = 1; len <= min(n, m); ++len) {
-        for (int i = len; i <= n; ++i) {
-            for (int j = len; j <= m; ++j) {
-                // Calculate the sum of the square ending at (i, j) with length len
-                int square_sum = dp[i][j] - dp[i - len][j] - dp[i][j - len] + dp[i - len][j - len];
-                int other_sum = total - square_sum;
-                min_diff = min(min_diff, abs(square_sum - other_sum));
-            }
+    long long totalCost = 0; 
+    int j = 0;  
+
+    for (int i = 0; i < n; ++i) {
+        while (j < m && coupons[j].first > goods[i]) {
+            ++j;
+        }
+        if (j < m && coupons[j].first <= goods[i]) {
+            totalCost += goods[i] - coupons[j].second;
+        } else {
+            totalCost += goods[i];
         }
     }
-
-    cout << min_diff << endl;
-
+    cout << totalCost << endl;
     return 0;
 }
