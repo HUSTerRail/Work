@@ -1,52 +1,39 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 #include <algorithm>
-
-const int MOD = 1000000007;
+using namespace std;
 
 int main() {
-    int n, k;
-    std::cin >> n >> k;
-
-    std::vector<int> arr(n);
+    int n;
+    cin >> n;
+    vector<int> arr(n);
     for (int i = 0; i < n; ++i) {
-        std::cin >> arr[i];
+        cin >> arr[i];
     }
-
-    // 排序数组，以便后续计算
-    std::sort(arr.begin(), arr.end());
-
-    // 创建一个二维动态规划数组dp，dp[i][j]表示前i个数中选择j个数，满足两两之间互为倍数的方案数
-    std::vector<std::vector<int>> dp(n + 1, std::vector<int>(k + 1, 0));
-
-    // 初始化第一列，当选择0个数时，方案数为1
-    for (int i = 0; i <= n; ++i) {
-        dp[i][0] = 1;
+    int min_ops = 1e9;  // 初始化最小操作次数为一个非常大的值
+    int MAX = INT_MIN;
+    for(int i = 0; i < n; i++){
+        MAX = max(arr[i], MAX);
     }
+    for (int target = arr[0]; target < MAX; target *= 2) {  // 第一个元素有可能降低到的最低值
+        int ops = 0;
+        int max_val = target;
+        for (int i = 0; i < n; ++i) {
+            int val = arr[i], cnt = 0;
 
-    // 填充动态规划数组
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= k; ++j) {
-            // 不选第i个数
-            dp[i][j] = dp[i - 1][j];
-
-            // 选第i个数
-            for (int m = 0; m < i; ++m) {
-                // 检查arr[i-1]是否是arr[m]的倍数，如果是，则可以将arr[i-1]加入方案中
-                if (arr[i - 1] % arr[m] == 0) {
-                    dp[i][j] = (dp[i][j] + dp[m][j - 1]) % MOD;
-                }
+            while (val > max_val) {  // 使元素尽可能降低到最低水平
+                val /= 2;
+                ++cnt;
             }
+            while (val * 2 <= max_val) {  // 使元素尽可能增大到最高水平
+                val *= 2;
+                ++cnt;
+            }
+            ops += cnt;
+            max_val = max(max_val, val);  // 更新可能的最大值
         }
+        min_ops = min(min_ops, ops);
     }
-
-    // 计算删除方案的总数
-    int ans = 0;
-    for (int i = 1; i <= n; ++i) {
-        ans = (ans + dp[i][k]) % MOD;
-    }
-
-    std::cout << ans << std::endl;
-
+    cout << min_ops << endl;
     return 0;
 }
+
