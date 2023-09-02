@@ -4,43 +4,39 @@
 
 using namespace std;
 
-struct Coupon {
-    int b, c;
-};
-
-bool cmp(const Coupon& a, const Coupon& b) {
-    return a.b > b.b;
-}
-
 int main() {
     int n, m;
     cin >> n >> m;
-    
-    vector<int> prices(n);
+
+    vector<int> goods(n);
+    vector<pair<int, int>> coupons(m);
+
     for (int i = 0; i < n; ++i) {
-        cin >> prices[i];
+        cin >> goods[i];
     }
-    
-    vector<Coupon> coupons(m);
+
     for (int i = 0; i < m; ++i) {
-        cin >> coupons[i].b >> coupons[i].c;
+        cin >> coupons[i].first >> coupons[i].second;
     }
-    
-    sort(coupons.begin(), coupons.end(), cmp);
-    
-    long long totalCost = 0;
-    int couponIndex = 0;
-    
+    sort(goods.begin(), goods.end(), greater<int>());
+    sort(coupons.begin(), coupons.end(), greater<pair<int, int>>());
+
+    long long totalCost = 0;  
+    int j = 0;  
+
     for (int i = 0; i < n; ++i) {
-        if (couponIndex < m && prices[i] >= coupons[couponIndex].b) {
-            totalCost += max(prices[i] - coupons[couponIndex].c, 0);
-            ++couponIndex;
+        while (j < m && coupons[j].first > goods[i]) {
+            ++j;
+        }
+
+        if (j < m && coupons[j].first <= goods[i]) {
+            totalCost += goods[i] - coupons[j].second;
         } else {
-            totalCost += prices[i];
+            totalCost += goods[i];
         }
     }
-    
+
     cout << totalCost << endl;
-    
+
     return 0;
 }
