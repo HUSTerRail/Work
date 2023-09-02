@@ -1,27 +1,31 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
+
 int main() {
-    int N;
-    cin >> N;
-    vector<int> red(N), white(N), yellow(N), pink(N);
-    for(int i = 0; i < N; ++i) {
-        cin >> red[i] >> white[i] >> yellow[i] >> pink[i];
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for(int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    unordered_map<int, int> colorSum;
-    for(int r : red) {
-        for(int w : white) {
-            ++colorSum[r + w];
+
+    int res = 0;
+    for(int i = 1; i < n; i++) {
+        int cur = a[i];
+        int cnt = 0;
+        while(cur > a[0]) {
+            cur /= 2;
+            cnt++;
         }
+        while(cur < a[0]) {
+            cur *= 2;
+            cnt++;
+        }
+        res = max(res, cnt);
     }
-    int count = 0;
-    for(int y : yellow) {
-        for(int p : pink) {
-            int need = 1000 - (y + p);
-            if(colorSum.find(need) != colorSum.end()) {
-                count += colorSum[need];
-            }
-        }
-    }  
-    cout << count << endl;
+
+    cout << res << endl;
     return 0;
 }
