@@ -1,44 +1,57 @@
 #include <iostream>
+#include <string>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
 
-static bool cmp(const pair<int, int> a1, const pair<int, int> a2){
-    return a1.second > a2.second;
+void calcEditDistance(const string &str1, const string &str2, int &ins, int &del, int &sub) {
+    int m = str1.length();
+    int n = str2.length();
+    
+    vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+
+    for (int i = 0; i <= m; ++i) dp[i][0] = i;
+    for (int j = 0; j <= n; ++j) dp[0][j] = j;
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            int cost = (str1[i-1] == str2[j-1]) ? 0 : 1;
+            dp[i][j] = min({dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + cost});
+        }
+    }
+
+    // Calculate number of insertions, deletions, and substitutions
+    int i = m, j = n;
+    ins = 0, del = 0, sub = 0;
+    while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && dp[i][j] == dp[i-1][j-1] + (str1[i-1] != str2[j-1])) {
+            if (str1[i-1] != str2[j-1]) {
+                ++sub;
+            }
+            --i;
+            --j;
+        } else if (i > 0 && dp[i][j] == dp[i-1][j] + 1) {
+            ++del;
+            --i;
+        } else {
+            ++ins;
+            --j;
+        }
+    }
 }
 
 int main() {
-    int n, m;
-    cin >> n >> m;
+    string str1, str2;
+    getline(cin, str1);
+    getline(cin, str2);
 
-    vector<int> goods(n);
-    vector<pair<int, int>> coupons(m);
+    int ins, del, sub;
+    calcEditDistance(str1, str2, ins, del, sub);
 
-    for (int i = 0; i < n; ++i) {
-        cin >> goods[i];
-    }
+    cout << ins << endl;
+    cout << del << endl;
+    cout << sub << endl;
 
-    for (int i = 0; i < m; ++i) {
-        cin >> coupons[i].first >> coupons[i].second;
-    }
-
-    sort(goods.begin(), goods.end(), greater<int>());
-    sort(coupons.begin(), coupons.end(), cmp);
-
-    long long totalCost = 0; 
-    int j = 0;  
-
-    for (int i = 0; i < n; ++i) {
-        while (j < m && coupons[j].first > goods[i]) {
-            ++j;
-        }
-        if (j < m && coupons[j].first <= goods[i]) {
-            totalCost += goods[i] - coupons[j].second;
-        } else {
-            totalCost += goods[i];
-        }
-    }
-    cout << totalCost << endl;
     return 0;
 }
