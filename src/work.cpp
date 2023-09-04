@@ -1,40 +1,30 @@
-#include <bits/stdc++.h>
-#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
-int main() {
-    int n;
-    cin >> n;
-    vector<int> arr(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> arr[i];
-    }
-    int min_ops = 1e9;  // 初始化最小操作次数为一个非常大的值
-    int MAX = INT_MIN;
-    for(int i = 0; i < n; i++){
-        MAX = max(arr[i], MAX);
-    }
-    int add_count = 0;
-    for (int target = arr[0]; target < MAX; target *= 2, add_count++) {  // 第一个元素有可能降低到的最低值
-        int ops = 0;
-        int max_val = target;
-        for (int i = 0; i < n; ++i) {
-            int val = arr[i], cnt = 0;
+int lcs(string s1, string s2) {
+    int n = s1.length();
+    int m = s2.length();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
 
-            while (val > max_val) {  // 使元素尽可能降低到最低水平
-                val /= 2;
-                ++cnt;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[i][j] = dp[i-1][j-1] + 1;
+            } else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
             }
-            while (val * 2 <= max_val) {  // 使元素尽可能增大到最高水平
-                val *= 2;
-                ++cnt;
-            }
-            ops += cnt;
-            max_val = max(max_val, val);  // 更新可能的最大值
         }
-        min_ops = min(min_ops, ops + add_count);
     }
-    min_ops = min(min_ops, add_count);
-    cout << min_ops << endl;
+    return dp[n][m];
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    string s1, s2;
+    cin >> s1 >> s2;
+    cout << lcs(s1, s2) << endl;
     return 0;
 }
