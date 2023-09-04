@@ -1,30 +1,46 @@
 #include <iostream>
 #include <vector>
-#include <string>
+#include <climits>
 using namespace std;
 
-int lcs(string s1, string s2) {
-    int n = s1.length();
-    int m = s2.length();
-    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
-
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
-            if (s1[i-1] == s2[j-1]) {
-                dp[i][j] = dp[i-1][j-1] + 1;
-            } else {
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
-            }
+int kadane(vector<int>& arr) {
+    int maxSum = INT_MIN, sum = 0;
+    for (int i = 0; i < arr.size(); i++) {
+        sum += arr[i];
+        if (maxSum < sum) {
+            maxSum = sum;
+        }
+        if (sum < 0) {
+            sum = 0;
         }
     }
-    return dp[n][m];
+    return maxSum;
+}
+
+int maxSubMatrix(vector<vector<int>>& matrix) {
+    int N = matrix.size();
+    int maxRectangle = INT_MIN;
+    for (int left = 0; left < N; left++) {
+        vector<int> tmp(N, 0);
+        for (int right = left; right < N; right++) {
+            for (int i = 0; i < N; i++) {
+                tmp[i] += matrix[i][right];
+            }
+            maxRectangle = max(maxRectangle, kadane(tmp));
+        }
+    }
+    return maxRectangle;
 }
 
 int main() {
-    int n, m;
-    cin >> n >> m;
-    string s1, s2;
-    cin >> s1 >> s2;
-    cout << lcs(s1, s2) << endl;
+    int N;
+    cin >> N;
+    vector<vector<int>> matrix(N, vector<int>(N));
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cin >> matrix[i][j];
+        }
+    }
+    cout << maxSubMatrix(matrix) << endl;
     return 0;
 }
