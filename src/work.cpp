@@ -1,46 +1,39 @@
 #include <iostream>
-#include <vector>
-#include <climits>
+#include <string>
 using namespace std;
 
-int kadane(vector<int>& arr) {
-    int maxSum = INT_MIN, sum = 0;
-    for (int i = 0; i < arr.size(); i++) {
-        sum += arr[i];
-        if (maxSum < sum) {
-            maxSum = sum;
+string maximizeNumber(string num) {
+    int n = num.length();
+    // 最后一位字符肯定不会交换，所以初始化为最后一个字符
+    char maxChar = num[n-1];
+    // 记录从后向前看每个位置的最大字符
+    string maxRight(n, '0');
+    maxRight[n-1] = num[n-1];
+    
+    for (int i = n-2; i >= 0; --i) {
+        if (num[i] > maxChar) {
+            maxChar = num[i];
         }
-        if (sum < 0) {
-            sum = 0;
-        }
+        maxRight[i] = maxChar;
     }
-    return maxSum;
-}
-
-int maxSubMatrix(vector<vector<int>>& matrix) {
-    int N = matrix.size();
-    int maxRectangle = INT_MIN;
-    for (int left = 0; left < N; left++) {
-        vector<int> tmp(N, 0);
-        for (int right = left; right < N; right++) {
-            for (int i = 0; i < N; i++) {
-                tmp[i] += matrix[i][right];
+    
+    for (int i = 0; i < n - 1; ++i) {
+        if (num[i] < maxRight[i]) {
+            // 找到第一个比num[i]大的字符，并交换
+            for (int j = n-1; j > i; --j) {
+                if (num[j] == maxRight[i]) {
+                    swap(num[i], num[j]);
+                    return num;
+                }
             }
-            maxRectangle = max(maxRectangle, kadane(tmp));
         }
     }
-    return maxRectangle;
+    return num;
 }
 
 int main() {
-    int N;
-    cin >> N;
-    vector<vector<int>> matrix(N, vector<int>(N));
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            cin >> matrix[i][j];
-        }
-    }
-    cout << maxSubMatrix(matrix) << endl;
+    string num;
+    cin >> num;
+    cout << maximizeNumber(num) << endl;
     return 0;
 }
