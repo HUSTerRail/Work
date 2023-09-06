@@ -1,39 +1,40 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <climits>
+
 using namespace std;
 
-string maximizeNumber(string num) {
-    int n = num.length();
-    // 最后一位字符肯定不会交换，所以初始化为最后一个字符
-    char maxChar = num[n-1];
-    // 记录从后向前看每个位置的最大字符
-    string maxRight(n, '0');
-    maxRight[n-1] = num[n-1];
-    
-    for (int i = n-2; i >= 0; --i) {
-        if (num[i] > maxChar) {
-            maxChar = num[i];
-        }
-        maxRight[i] = maxChar;
-    }
-    
-    for (int i = 0; i < n - 1; ++i) {
-        if (num[i] < maxRight[i]) {
-            // 找到第一个比num[i]大的字符，并交换
-            for (int j = n-1; j > i; --j) {
-                if (num[j] == maxRight[i]) {
-                    swap(num[i], num[j]);
-                    return num;
+int minWoods(const vector<int>& woods, int length) {
+    vector<int> dp(length + 1, INT_MAX);  // 初始化为最大值
+    dp[0] = 0;  // 0长度不需要任何木材
+    for (int i = 0; i <= length; ++i) {
+        if (dp[i] != INT_MAX) {
+            for (int wood : woods) {
+                if (i + wood <= length) {
+                    dp[i + wood] = min(dp[i + wood], dp[i] + 1);
                 }
             }
         }
     }
-    return num;
+    return dp[length] == INT_MAX ? -1 : dp[length];
 }
 
 int main() {
-    string num;
-    cin >> num;
-    cout << maximizeNumber(num) << endl;
+    string line1, line2;
+    getline(cin, line1);
+    getline(cin, line2);
+    
+    istringstream iss(line1);
+    vector<int> woods;
+    int temp;
+    while (iss >> temp) {
+        woods.push_back(temp);
+    }
+    
+    int length = stoi(line2);
+    
+    cout << minWoods(woods, length) << endl;
     return 0;
 }
