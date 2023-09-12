@@ -2,64 +2,51 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-
+#include <queue>
 using namespace std;
 
-const int N = 1e5 + 5;
+const int maxn = 1e3 + 5;
+int a[maxn], b[maxn], n, k;
 
-int n, k;
-int a[N], b[N];
-int parent[N];
+bool check(int mid) {
+    vector<bool> vis(n, false);
+    int cnt = 0;
 
-int find(int x) {
-    return parent[x] == x ? x : parent[x] = find(parent[x]);
-}
+    for (int i = 0; i < n; ++i) {
+        if (vis[i]) continue;
 
-bool check(int L) {
-    for (int i = 1; i <= n; i++) {
-        parent[i] = i;
-    }
-
-    for (int i = 1; i <= n; i++) {
-        for (int j = i + 1; j <= n; j++) {
-            if (abs(a[i] - a[j]) + abs(b[i] - b[j]) <= L) {
-                int u = find(i);
-                int v = find(j);
-                if (u != v) {
-                    parent[u] = v;
+        vis[i] = true;
+        queue<int> q;
+        q.push(i);
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            for (int v = 0; v < n; ++v) {
+                if (!vis[v] && abs(a[u]-a[v]) + abs(b[u]-b[v]) <= mid) {
+                    vis[v] = true;
+                    q.push(v);
                 }
             }
         }
+        ++cnt;
     }
 
-    int groups = 0;
-    for (int i = 1; i <= n; i++) {
-        if (parent[i] == i) {
-            groups++;
-        }
-    }
-
-    return groups <= k;
+    return cnt >= k;
 }
 
 int main() {
     cin >> n >> k;
-    for (int i = 1; i <= n; i++) {
-        cin >> a[i];
-    }
-    for (int i = 1; i <= n; i++) {
-        cin >> b[i];
-    }
+    for (int i = 0; i < n; ++i) cin >> a[i];
+    for (int i = 0; i < n; ++i) cin >> b[i];
 
-    int left = 0, right = 2e5 + 10;
-    int ans = -1;
-    while (left <= right) {
-        int mid = (left + right) >> 1;
+    int l = 0, r = 2e4, ans = -1; 
+    while (l <= r) {
+        int mid = (l + r) / 2;
         if (check(mid)) {
             ans = mid;
-            right = mid - 1;
+            l = mid + 1;
         } else {
-            left = mid + 1;
+            r = mid - 1;
         }
     }
 
