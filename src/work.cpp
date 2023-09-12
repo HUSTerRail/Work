@@ -1,55 +1,68 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
-int main() {
-    long int n, k;
-    cin >> n >> k;
+const int N = 1e5 + 5;
 
-    vector<long int> beauty_values(n);
-    for (long int i = 0; i < n; ++i) {
-        cin >> beauty_values[i];
+int n, k;
+int a[N], b[N];
+int parent[N];
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+bool check(int L) {
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i;
     }
 
-    sort(beauty_values.rbegin(), beauty_values.rend());  // 从大到小排序
-
-    long int happiness = 0;
-    long int count = 0;
-    int record = 0;
-
-    for (long int i = 0; i < n; ++i) {
-        if (beauty_values[i] > 0) {
-            record++;
-            happiness += beauty_values[i];
-            count++;
-            if(record == 3){
-                record = 0;
-                happiness += k;
-            }
-        } else if(record != 0){
-            if(record == 1){
-                if(i + 1 < n && beauty_values[i] + beauty_values[i + 1] + k > 0){
-                    happiness += beauty_values[i] + beauty_values[i + 1] + k;
-                    i += 1;
-                }
-            }else if(record == 2){
-                if(beauty_values[i] + k > 0){
-                    happiness += beauty_values[i] + k;
+    for (int i = 1; i <= n; i++) {
+        for (int j = i + 1; j <= n; j++) {
+            if (abs(a[i] - a[j]) + abs(b[i] - b[j]) <= L) {
+                int u = find(i);
+                int v = find(j);
+                if (u != v) {
+                    parent[u] = v;
                 }
             }
-            record = 0;
-        }else if (i + 2 < n && beauty_values[i] + beauty_values[i + 1] + beauty_values[i + 2] + k > 0) {
-            happiness += beauty_values[i] + beauty_values[i + 1] + beauty_values[i + 2] + k;
-            count += 3;
-            i += 2;
         }
     }
 
-    // happiness += (count / 3) * k;
+    int groups = 0;
+    for (int i = 1; i <= n; i++) {
+        if (parent[i] == i) {
+            groups++;
+        }
+    }
 
-    cout << happiness << endl;
+    return groups <= k;
+}
 
+int main() {
+    cin >> n >> k;
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+    }
+    for (int i = 1; i <= n; i++) {
+        cin >> b[i];
+    }
+
+    int left = 0, right = 2e5 + 10;
+    int ans = -1;
+    while (left <= right) {
+        int mid = (left + right) >> 1;
+        if (check(mid)) {
+            ans = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    cout << ans << endl;
     return 0;
 }
