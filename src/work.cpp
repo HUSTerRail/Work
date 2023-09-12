@@ -1,49 +1,31 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+
 using namespace std;
 
-int countGroups() {
-    fill(visited.begin(), visited.end(), false);
-    int count = 0;
-    for (int i = 0; i < n; ++i) {
-        if (!visited[i]) {
-            dfs(i);
-            count++;
-        }
-    }
-    return count;
-}
-
 int main() {
+    int n, k;
     cin >> n >> k;
-    strs.resize(n);
-    adjMatrix.resize(n, vector<int>(n, 0));
-    visited.resize(n, false);
 
-    for (int i = 0; i < n; ++i) {
-        cin >> strs[i];
-    }
+    vector<vector<int>> matrix(n, vector<int>(n, 1));
 
-    vector<int> deleteOrder(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> deleteOrder[i];
-        deleteOrder[i]--;
-    }
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = i+1; j < n; ++j) {
-            if (longestCommonSubstring(strs[i], strs[j]) >= k) {
-                adjMatrix[i][j] = adjMatrix[j][i] = 1;
+    for (int i = 0; i < n && k > 0; i++) {
+        for (int j = 0; j < n && k > 0; j++) {
+            if (matrix[i][j] == 1) {
+                matrix[i][j] = 0;
+                matrix[j][i] = 0;
+                if (i == j) k--;
+                else k -= 2;
             }
         }
     }
 
-    cout << countGroups() << endl;
-    for (int i = 0; i < n; ++i) {
-        strs[deleteOrder[i]] = "";
-        for (int j = 0; j < n; ++j) {
-            adjMatrix[deleteOrder[i]][j] = adjMatrix[j][deleteOrder[i]] = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << matrix[i][j];
+            if (j != n - 1) cout << " ";
         }
-        cout << countGroups() - i - 1 << endl;
+        cout << endl;
     }
 
     return 0;
