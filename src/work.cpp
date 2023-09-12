@@ -5,20 +5,20 @@
 using namespace std;
 
 int main() {
-    int n, k;
+    long int n, k;
     cin >> n >> k;
 
-    vector<int> beauty_values(n);
-    for (int i = 0; i < n; ++i) {
+    vector<long int> beauty_values(n);
+    for (long int i = 0; i < n; ++i) {
         cin >> beauty_values[i];
     }
 
     sort(beauty_values.rbegin(), beauty_values.rend());  // 从大到小排序
 
-    int happiness = 0;
-    int count = 0;
+    long int happiness = 0;
+    long int count = 0;
 
-    for (int i = 0; i < n; ++i) {
+    for (long int i = 0; i < n; ++i) {
         if (beauty_values[i] > 0) {
             happiness += beauty_values[i];
             count++;
