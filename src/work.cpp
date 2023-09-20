@@ -2,48 +2,55 @@
 
 using namespace std;
 
-const int dx[4] = {-1, 1, 0, 0};  // 上、下、左、右
-const int dy[4] = {0, 0, -1, 1};
-
-int minPasses(vector<vector<int>>& matrix, int m, int n) {
-    int res = INT_MAX;
-    bool found = false;
-    for (int i = 0; i < m; i++) {
-        if (matrix[i][0] == 1) {
-            vector<vector<bool>> visited(m, vector<bool>(n, false));
-            queue<pair<pair<int, int>, int>> q;
-            q.push({{i, 0}, 0});
-            visited[i][0] = true;
-            while (!q.empty()) {
-                auto [coord, passes] = q.front();
-                q.pop();
-                for (int j = 0; j < 4; j++) {
-                    int x = coord.first + dx[j];
-                    int y = coord.second + dy[j];
-                    if (x >= 0 && x < m && y >= 0 && y < n && !visited[x][y] && matrix[x][y] == 1) {
-                        if (y == n - 1) {
-                            res = min(res, passes + 1);
-                            found = true;
-                        } else {
-                            q.push({{x, y}, passes + 1});
-                            visited[x][y] = true;
-                        }
-                    }
-                }
-            }
+pair<int, int> findRange(const vector<int>& nums, int sn) {
+    int n = nums.size();
+    int found = -1;
+    for (int i = 0; i < n; ++i) {
+        if (nums[i] == sn) {
+            found = i;
+            break;
         }
     }
-    return found ? res : -1;
+
+    if (found == -1) {
+        return {-1, -1};  // Not found
+    }
+
+    int start = found, end = found;
+
+    // Find start
+    int i = 0;
+    while (nums[start] == sn) {
+        start = (start - 1 + n) % n;
+        i++;
+        if(i > n){
+        	return {0, n - 1};
+        }
+    }
+    start = (start + 1) % n;  // Adjust to the first position of sn
+
+    // Find end
+    while (nums[end] == sn) {
+        end = (end + 1) % n;
+    }
+    end = (end - 1 + n) % n;  // Adjust to the last position of sn
+
+    return {start, end};
 }
 
 int main() {
-    int m, n;
-    cin >> m >> n;
-    vector<vector<int>> matrix(m, vector<int>(n));
-    for (int i = 0; i < m; i++)
-        for (int j = 0; j < n; j++)
-            cin >> matrix[i][j];
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
+    }
+    int sn;
+    cin >> sn;
 
-    cout << minPasses(matrix, m, n) << endl;
+    auto [start, end] = findRange(nums, sn);
+
+    cout << start << " " << end << endl;
+
     return 0;
 }
