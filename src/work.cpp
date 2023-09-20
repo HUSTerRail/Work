@@ -27,7 +27,7 @@ pair<int, int> findRange(const vector<int>& nums, int sn) {
         	return {0, n - 1};
         }
     }
-    start = (start + 1) % n;  // Adjust to the first position of sn
+    start = (start + 1) % n;  
 
     // Find end
     while (nums[end] == sn) {
