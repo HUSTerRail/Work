@@ -1,4 +1,4 @@
-    int n = nums.size(); 44
+    int n = nums.size(); 33
     int maxLength = 0;
     
     for (int i = 0; i < n; ++i) {
