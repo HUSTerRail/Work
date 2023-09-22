@@ -2,7 +2,7 @@
 using namespace std;
 
 string generate_contract(string product, int year, int month) {
-    stringstream ss;
+    stringstream ss; 
     ss << product << (year % 100);
     if (month < 10) ss << '0';
     ss << month;
