@@ -1,56 +1,25 @@
-#include <bits/stdc++.h>
-  333
+#include <iostream>
+#include <vector>
+
 using namespace std;
-
-pair<int, int> findRange(const vector<int>& nums, int sn) {
-    int n = nums.size();
-    int found = -1;
-    for (int i = 0; i < n; ++i) {
-        if (nums[i] == sn) {
-            found = i;
-            break;
-        }
-    }
-
-    if (found == -1) {
-        return {-1, -1};  // Not found
-    }
-
-    int start = found, end = found;
-
-    // Find start
-    int i = 0;
-    while (nums[start] == sn) {
-        start = (start - 1 + n) % n;
-        i++;
-        if(i > n){
-        	return {0, n - 1};
-        }
-    }
-    start = (start + 1) % n;  
-
-    // Find end
-    while (nums[end] == sn) {
-        end = (end + 1) % n;
-    }
-    end = (end - 1 + n) % n;  // Adjust to the last position of sn
-
-    return {start, end};
-}
 
 int main() {
     int n;
     cin >> n;
-    vector<int> nums(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> nums[i];
+
+    if(n < 1 || n > 40) {
+        cout << "Invalid input.";
+        return 0;
     }
-    int sn;
-    cin >> sn;
 
-    auto [start, end] = findRange(nums, sn);
+    vector<long long> dp(n + 1, 0);
+    dp[0] = 1;
+    dp[1] = 1;
+    for(int i = 2; i <= n; ++i) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
 
-    cout << start << " " << end << endl;
+    cout << dp[n] << endl;
 
     return 0;
 }
