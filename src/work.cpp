@@ -1,58 +1,54 @@
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <string>
-#include <sstream>
+#include <cmath>
+#include <climits>
 
 using namespace std;
 
-bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
-    vector<vector<int>> graph(numCourses, vector<int>());
-    vector<int> in(numCourses, 0);
-    
-    for (auto a : prerequisites) {
-        graph[a.second].push_back(a.first);
-        ++in[a.first];
+vector<int> bestCoordinate(vector<vector<int>>& towers, int radius) {
+    int maxX = 0, maxY = 0;
+    for (const auto& tower : towers) {
+        maxX = max(maxX, tower[0]);
+        maxY = max(maxY, tower[1]);
     }
     
-    queue<int> q;
-    for (int i = 0; i < numCourses; ++i) {
-        if (in[i] == 0) q.push(i);
-    }
+    pair<int, int> bestCoord = {0, 0};
+    int bestSignal = INT_MIN;
     
-    while (!q.empty()) {
-        int t = q.front(); q.pop();
-        for (auto a : graph[t]) {
-            --in[a];
-            if (in[a] == 0) q.push(a);
+    for (int x = 0; x <= maxX; ++x) {
+        for (int y = 0; y <= maxY; ++y) {
+            int curSignal = 0;
+            
+            for (const auto& tower : towers) {
+                int dx = x - tower[0], dy = y - tower[1];
+                double distance = sqrt(dx * dx + dy * dy);
+                
+                if (distance <= radius) {
+                    curSignal += floor(tower[2] / (1 + distance));
+                }
+            }
+            
+            if (curSignal > bestSignal) {
+                bestSignal = curSignal;
+                bestCoord = {x, y};
+            }
         }
     }
     
-    for (int i = 0; i < numCourses; ++i) {
-        if (in[i] != 0) return false;
-    }
-    return true;
+    return {bestCoord.first, bestCoord.second};
 }
 
 int main() {
-    int n;
-    cin >> n;
-    cin.ignore();
+    int n, radius;
+    char ch;
+    cin >> n >> ch >> radius;
 
-    string line;
-    getline(cin, line);
-    
-    vector<pair<int, int>> prerequisites;
-    
-    stringstream ss(line);
-    string temp;
-    while (getline(ss, temp, ',')) {
-        int a, b;
-        sscanf(temp.c_str(), "%d:%d", &a, &b);
-        prerequisites.push_back({a, b});
+    vector<vector<int>> towers(n, vector<int>(3));
+    for (int i = 0; i < n; ++i) {
+        cin >> towers[i][0] >> ch >> towers[i][1] >> ch >> towers[i][2];
     }
-    
-    cout << (canFinish(n, prerequisites) ? 1 : 0) << endl;
-    
+
+    vector<int> res = bestCoordinate(towers, radius);
+    cout << res[0] << "," << res[1] << endl;
     return 0;
 }
