@@ -1,54 +1,52 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <climits>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-vector<int> bestCoordinate(vector<vector<int>>& towers, int radius) {
-    int maxX = 0, maxY = 0;
-    for (const auto& tower : towers) {
-        maxX = max(maxX, tower[0]);
-        maxY = max(maxY, tower[1]);
+// 检查字符串是否为回文
+bool isPalindrome(const string& s, int start, int end) {
+    while (start < end) {
+        if (s[start] != s[end]) {
+            return false;
+        }
+        ++start;
+        --end;
     }
-    
-    pair<int, int> bestCoord = {0, 0};
-    int bestSignal = INT_MIN;
-    
-    for (int x = 0; x <= maxX; ++x) {
-        for (int y = 0; y <= maxY; ++y) {
-            int curSignal = 0;
-            
-            for (const auto& tower : towers) {
-                int dx = x - tower[0], dy = y - tower[1];
-                double distance = sqrt(dx * dx + dy * dy);
-                
-                if (distance <= radius) {
-                    curSignal += floor(tower[2] / (1 + distance));
-                }
-            }
-            
-            if (curSignal > bestSignal) {
-                bestSignal = curSignal;
-                bestCoord = {x, y};
-            }
+    return true;
+}
+
+// 回溯函数
+void backtrack(vector<vector<string>>& res, vector<string>& path, const string& s, int start) {
+    // 如果开始位置达到字符串的长度，说明找到了一种分割方案
+    if (start == s.size()) {
+        res.push_back(path);
+        return;
+    }
+
+    for (int end = start; end < s.size(); ++end) {
+        // 如果从start到end是回文，则继续寻找下一组分割方案
+        if (isPalindrome(s, start, end)) {
+            path.push_back(s.substr(start, end - start + 1));
+            backtrack(res, path, s, end + 1);
+            path.pop_back();
         }
     }
-    
-    return {bestCoord.first, bestCoord.second};
 }
 
 int main() {
-    int n, radius;
-    char ch;
-    cin >> n >> ch >> radius;
+    string s;
+    cin >> s;
 
-    vector<vector<int>> towers(n, vector<int>(3));
-    for (int i = 0; i < n; ++i) {
-        cin >> towers[i][0] >> ch >> towers[i][1] >> ch >> towers[i][2];
+    vector<vector<string>> res;
+    vector<string> path;
+    backtrack(res, path, s, 0);
+
+    // 输出所有可能的分割方案
+    for (const auto& vec : res) {
+        for (const auto& str : vec) {
+            cout << str << " ";
+        }
+        cout << endl;
     }
 
-    vector<int> res = bestCoordinate(towers, radius);
-    cout << res[0] << "," << res[1] << endl;
     return 0;
 }
